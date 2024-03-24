@@ -113,40 +113,15 @@ public class CustomerDAO implements CustomerDAOInterface {
         return customers;
     }
 
-    public String hashPassword(char[] password) {
-        // Convert char[] to String
-        String passwordStr = new String(password);
-        // Generate a salt and hash the password
-        String hashed = BCrypt.hashpw(passwordStr, BCrypt.gensalt());
-        return hashed;
-    }
-
-    public boolean checkPassword(String plainPassword, String storedHash) {
-        try {
-            return BCrypt.checkpw(plainPassword, storedHash);
-        } catch (Exception e) {
-            // Log exception or handle error
-            System.err.println("Error checking password: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public boolean login(String email, char[] password) {
+    public boolean authenticateCustomer(String email, String password) {
         try (Connection conn = getConnection()) {
-            String sql = "SELECT id, hashed_password FROM Customer WHERE email = ?";
+            String sql = "SELECT hashed_password FROM Customer WHERE email = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, email);
                 ResultSet rs = stmt.executeQuery();
-    
                 if (rs.next()) {
                     String storedHash = rs.getString("hashed_password");
-                    int customerId = rs.getInt("id");
-    
-                    // Use the checkPassword method
-                    if (checkPassword(new String(password), storedHash)) {
-                        // Login successful, load customer data or perform other actions using customerId
-                        return true;
-                    }
+                    return BCrypt.checkpw(password, storedHash);
                 }
             }
         } catch (SQLException e) {
@@ -154,6 +129,6 @@ public class CustomerDAO implements CustomerDAOInterface {
         }
         return false;
     }
-    
+
     
 }

@@ -3,10 +3,12 @@ import javax.swing.SwingUtilities;
 
 public class Driver {
     public static void main(String[] args) {
-        EmployeeManagementWindow();
-        customerManagementWindow();
-        accountManagementWindow();
-        transactionManagementWindow();
+       // EmployeeManagementWindow();
+       // customerManagementWindow();
+
+        LoginWindow();
+        //accountManagementWindow();
+       // transactionManagementWindow();
     }
 
     public static void EmployeeManagementWindow(){
@@ -85,6 +87,22 @@ public class Driver {
             frame.add(transactionController.getView());
 
             frame.pack(); // Adjust the window size to fit its content
+            frame.setVisible(true);
+        });
+    }
+
+    public static void LoginWindow(){
+
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Customer Login");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(300, 150);
+
+            CustomerDAO customerDAO = new CustomerDAO();
+            LoginPanel loginPanel = new LoginPanel(customerDAO);
+            frame.add(loginPanel);
+
+            frame.setLocationRelativeTo(null); // Center the window
             frame.setVisible(true);
         });
     }
