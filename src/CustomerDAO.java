@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class CustomerDAO implements CustomerDAOInterface {
 
@@ -11,23 +12,27 @@ public class CustomerDAO implements CustomerDAOInterface {
         return DriverManager.getConnection(url, user, password);
     }
 
-    @Override
     public void addCustomer(Customer customer) {
-        String sql = "INSERT INTO Customer (id, first_name, last_name, email, phone, sex, birthday) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Customer (first_name, last_name, email, phone, sex, birthday, hashed_password) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, customer.getId());
-            stmt.setString(2, customer.getFirstName());
-            stmt.setString(3, customer.getLastName());
-            stmt.setString(4, customer.getEmail());
-            stmt.setString(5, customer.getPhone());
-            stmt.setString(6, customer.getSex());
-            stmt.setDate(7, new Date(customer.getBirthday().getTime()));
+            stmt.setString(1, customer.getFirstName());
+            stmt.setString(2, customer.getLastName());
+            stmt.setString(3, customer.getEmail());
+            stmt.setString(4, customer.getPhone());
+            stmt.setString(5, customer.getSex());
+            stmt.setDate(6, new java.sql.Date(customer.getBirthday().getTime()));
+            // Hash the plaintext password before storing it
+            String hashedPassword = BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt());
+            stmt.setString(7, hashedPassword);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+    
+
+
 
     @Override
     public Customer getCustomer(String id) {
@@ -38,7 +43,7 @@ public class CustomerDAO implements CustomerDAOInterface {
             stmt.setString(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                customer = new Customer(sql, sql, sql, sql, sql, sql, null);
+                customer = new Customer(sql, sql, sql, sql, sql, null, sql, sql);
                 customer.setId(rs.getString("id"));
                 customer.setFirstName(rs.getString("first_name"));
                 customer.setLastName(rs.getString("last_name"));
@@ -46,6 +51,7 @@ public class CustomerDAO implements CustomerDAOInterface {
                 customer.setPhone(rs.getString("phone"));
                 customer.setSex(rs.getString("sex"));
                 customer.setBirthday(rs.getDate("birthday"));
+                customer.setPassword(rs.getString("hashed_password"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,7 +97,7 @@ public class CustomerDAO implements CustomerDAOInterface {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Customer customer = new Customer(sql, sql, sql, sql, sql, sql, null);
+                Customer customer = new Customer(sql, sql, sql, sql, sql, null, sql, sql);
                 customer.setId(rs.getString("id"));
                 customer.setFirstName(rs.getString("first_name"));
                 customer.setLastName(rs.getString("last_name"));
@@ -106,4 +112,48 @@ public class CustomerDAO implements CustomerDAOInterface {
         }
         return customers;
     }
+
+    public String hashPassword(char[] password) {
+        // Convert char[] to String
+        String passwordStr = new String(password);
+        // Generate a salt and hash the password
+        String hashed = BCrypt.hashpw(passwordStr, BCrypt.gensalt());
+        return hashed;
+    }
+
+    public boolean checkPassword(String plainPassword, String storedHash) {
+        try {
+            return BCrypt.checkpw(plainPassword, storedHash);
+        } catch (Exception e) {
+            // Log exception or handle error
+            System.err.println("Error checking password: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean login(String email, char[] password) {
+        try (Connection conn = getConnection()) {
+            String sql = "SELECT id, hashed_password FROM Customer WHERE email = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+    
+                if (rs.next()) {
+                    String storedHash = rs.getString("hashed_password");
+                    int customerId = rs.getInt("id");
+    
+                    // Use the checkPassword method
+                    if (checkPassword(new String(password), storedHash)) {
+                        // Login successful, load customer data or perform other actions using customerId
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    
 }

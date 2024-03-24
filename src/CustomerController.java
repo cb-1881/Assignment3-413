@@ -1,3 +1,6 @@
+
+import org.mindrot.jbcrypt.BCrypt;
+
 public class CustomerController {
     private CustomerPanel view;
     private CustomerDAO customerDAO;
@@ -27,10 +30,15 @@ public class CustomerController {
     private void addCustomer() {
         Customer customer = view.getCustomerDetails();
         if (customer != null) {
+            // Hash the password before adding the customer
+            String hashedPassword = BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt());
+            customer.setHashedPassword(hashedPassword); // Ensure Customer class has this setter
+    
             customerDAO.addCustomer(customer);
-            view.showMessage("Customer added successfully");
+            view.showMessage("Customer signed up successfully");
         }
     }
+    
 
     private void updateCustomer() {
         Customer customer = view.getCustomerDetails();
@@ -55,6 +63,9 @@ public class CustomerController {
     public void setCustomerDAO(CustomerDAO customerDAO) {
         this.customerDAO = customerDAO;
     }
+
+
+
 
     
 }

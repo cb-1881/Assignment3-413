@@ -78,15 +78,23 @@ public void updateTransaction(Transaction transaction) {
 
 @Override
 public void deleteTransaction(String id) {
-    String sql = "DELETE FROM transaction WHERE id = ?";
+    // Use "id" as the unique identifier for transactions.
+    String sql = "DELETE FROM transaction WHERE ref_id = ?";
     try (Connection conn = getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
-        stmt.setString(1, id);
-        stmt.executeUpdate();
+        // Ensure that you are setting an int if your ID is of type INT in the database.
+        stmt.setInt(1, Integer.parseInt(id));
+        int rowsAffected = stmt.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("Transaction deleted successfully.");
+        } else {
+            System.out.println("No transaction found with ID: " + id);
+        }
     } catch (SQLException e) {
         e.printStackTrace();
     }
 }
+
 
 @Override
 public List<Transaction> getAllTransactions() {

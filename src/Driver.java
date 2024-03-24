@@ -3,13 +3,13 @@ import javax.swing.SwingUtilities;
 
 public class Driver {
     public static void main(String[] args) {
-       // EmployeeWindow();
-        //customerWindow();
-        //accountWindow();
-        transactionWindow();
+        EmployeeManagementWindow();
+        customerManagementWindow();
+        accountManagementWindow();
+        transactionManagementWindow();
     }
 
-    public static void EmployeeWindow(){
+    public static void EmployeeManagementWindow(){
 
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Employee Management");
@@ -29,7 +29,7 @@ public class Driver {
             frame.setVisible(true);
         });
     }
-    public static void customerWindow() {
+    public static void customerManagementWindow() {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Customer Management");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,7 +49,7 @@ public class Driver {
         });
     }
 
-    public static void accountWindow() {
+    public static void accountManagementWindow() {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("account Management");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -69,7 +69,7 @@ public class Driver {
         });
     }
 
-    public static void transactionWindow() {
+    public static void transactionManagementWindow() {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Transaction Management");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

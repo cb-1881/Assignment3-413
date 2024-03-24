@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 public class CustomerPanel extends JPanel {
     private JTextField idField, firstNameField, lastNameField, emailField, phoneField, sexField, birthdayField;
     private JButton addButton, updateButton, deleteButton;
+    private JPasswordField passwordField;
 
     public CustomerPanel() {
         setLayout(new GridLayout(0, 2, 10, 10)); // Use a grid layout
@@ -47,6 +48,14 @@ public class CustomerPanel extends JPanel {
         birthdayField = new JTextField(20);
         add(birthdayField);
 
+
+        add(new JLabel("Password:"));
+        passwordField = new JPasswordField(20);
+        add(passwordField);
+
+        addButton = new JButton("Sign Up");
+        add(addButton);
+
         // Buttons for operations
         addButton = new JButton("Add");
         updateButton = new JButton("Update");
@@ -56,28 +65,30 @@ public class CustomerPanel extends JPanel {
         add(deleteButton);
     }
 
-public Customer getCustomerDetails() {
-    try {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        java.util.Date parsedBirthday = sdf.parse(birthdayField.getText());
-        java.sql.Date sqlBirthday = new java.sql.Date(parsedBirthday.getTime());
-
-        return new Customer(
-            idField.getText(), // Assuming an ID field is used for something; you might not need this for creation
-            firstNameField.getText(),
-            lastNameField.getText(),
-            emailField.getText(),
-            phoneField.getText(),
-            sexField.getText(),
-            sqlBirthday // Now correctly using java.sql.Date
-          
-        );
-    } catch (Exception e) {
-        showMessage("Error parsing date or number format: " + e.getMessage());
-        return null; // Or handle more gracefully
+    public Customer getCustomerDetails() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedBirthday = sdf.parse(birthdayField.getText());
+            java.sql.Date sqlBirthday = new java.sql.Date(parsedBirthday.getTime());
+            
+            // Pass a placeholder for the hashed password since it's not relevant at this stage.
+            // The actual hashing and storage of the hashed password will be handled in CustomerDAO when adding/updating the customer.
+            return new Customer(
+                firstNameField.getText(),
+                lastNameField.getText(),
+                emailField.getText(),
+                phoneField.getText(),
+                sexField.getText(),
+                sqlBirthday,
+                new String(passwordField.getPassword()), // This is the plaintext password.
+                "" // Placeholder for the hashed password
+            );
+        } catch (Exception e) {
+            showMessage("Error: " + e.getMessage());
+            return null;
+        }
     }
-}
-
+    
 
     public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
