@@ -4,7 +4,8 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 //import java.util.Calendar;
 import java.util.Date;
-
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
 public class AccountPanel extends JPanel {
     private JTextField acctNumField, custNumField, balanceField, createDateField, lastUpdateDateField, typeField, odLimitField, intRateField;
     private JButton addButton, updateButton, deleteButton;
@@ -12,7 +13,40 @@ public class AccountPanel extends JPanel {
     public AccountPanel() {
         setLayout(new GridLayout(0, 2, 10, 10)); // Use a grid layout
         initializeComponents();
+        initializeAccountsTable(); 
+    
+    
+    
     }
+
+
+// In AccountPanel, initialize and add a JTable
+private JTable accountsTable;
+private DefaultTableModel accountsTableModel;
+
+private void initializeAccountsTable() {
+    String[] columnNames = {"Account Number", "Customer Number", "Balance", "Type", "Interest Rate"};
+    accountsTableModel = new DefaultTableModel(columnNames, 0);
+    accountsTable = new JTable(accountsTableModel);
+    add(new JScrollPane(accountsTable)); // Ensure the table is scrollable
+}
+
+public void displayAccounts(List<Account> accounts) {
+    accountsTableModel.setRowCount(0); // Clear existing rows
+    
+    for (Account account : accounts) {
+        Object[] row = new Object[] {
+            account.getAcctNum(),
+            account.getCustNum(),
+            account.getBalance(),
+            account.getType(),
+            account.getIntRate()
+        };
+        accountsTableModel.addRow(row);
+    }
+}
+
+
 
     private void initializeComponents() {
         // Initialize all the components and fields here
@@ -81,6 +115,8 @@ public class AccountPanel extends JPanel {
             return null; // Or handle more gracefully
         }
     }
+
+    
 
     public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);

@@ -1,4 +1,6 @@
 
+import java.util.List;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 public class CustomerController {
@@ -9,6 +11,12 @@ public class CustomerController {
         this.view = view;
         this.customerDAO = new CustomerDAO();
         initController();
+        //displayAllCustomers();
+    }
+    public CustomerController(CustomerPanel view, CustomerDAO customerDAO) {
+        this.view = view;
+        this.customerDAO = customerDAO;
+        displayAllCustomers();
     }
 
     private void initController() {
@@ -66,6 +74,10 @@ public class CustomerController {
 
 
 
+    public void displayAllCustomers() {
+        List<Customer> customers = customerDAO.getAllCustomers();
+        view.displayCustomers(customers);
+    }
 
     
 }

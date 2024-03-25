@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class AccountController {
     private AccountPanel view;
     private AccountDAO accountDAO;
@@ -38,6 +40,8 @@ public class AccountController {
         view.showMessage("Account deleted successfully");
     }
 
+    
+
     public AccountPanel getView() {
         return view;
     }
@@ -53,4 +57,10 @@ public class AccountController {
     public void setAccountDAO(AccountDAO accountDAO) {
         this.accountDAO = accountDAO;
     }
+
+    public void fetchAndDisplayAccounts() {
+    List<Account> accounts = accountDAO.getAllAccounts();
+    view.displayAccounts(accounts);
+}
+
 }

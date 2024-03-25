@@ -1,15 +1,108 @@
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import java.awt.BorderLayout;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+
+import javax.swing.*;
+//import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Driver {
-    public static void main(String[] args) {
-       // EmployeeManagementWindow();
-       // customerManagementWindow();
 
-        LoginWindow();
-        //accountManagementWindow();
-       // transactionManagementWindow();
+    public static void main(String[] args) {
+       // Previous window initializations can remain commented out or be used as needed
+        //EmployeeManagementWindow();
+      // CustomerListingandManagement();
+       // customerManagementWindow();
+       // LoginWindow();
+       createWelcomeWindow();
+      //accountListing();
+      //initWindow();
+       // Other management windows can be initialized here if needed
+        //transactionManagementWindow();
     }
+
+    private static void createWelcomeWindow() {
+        SwingUtilities.invokeLater(() -> {
+            JFrame welcomeFrame = new JFrame("Welcome");
+            welcomeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            welcomeFrame.setLayout(new BorderLayout()); // Ensure layout is set to BorderLayout
+    
+            // Load the original image
+            ImageIcon originalIcon = new ImageIcon("images/cat.jpg"); // Adjust path as needed
+    
+            // Scale the image to the desired size
+            Image scaledImage = originalIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH); // Set width and height here
+    
+            // Create a new ImageIcon for JLabel
+            ImageIcon imageIcon = new ImageIcon(scaledImage);
+    
+            // Add the scaled image to a label and add the label to the frame
+            JLabel imageLabel = new JLabel(imageIcon);
+            welcomeFrame.add(imageLabel, BorderLayout.CENTER);
+    
+            // Create a "Go" button
+            JButton goButton = new JButton("Go");
+            goButton.addActionListener(e -> {
+                initWindow(); // Open all other windows
+                welcomeFrame.dispose(); // Close the welcome window
+            });
+    
+            // Add the button to the SOUTH region of the frame's content pane
+            welcomeFrame.getContentPane().add(goButton, BorderLayout.SOUTH);
+    
+            // Pack the frame or set a fixed size
+            welcomeFrame.pack();
+            welcomeFrame.setSize(400, 400); // Adjust size as needed to accommodate the image
+            welcomeFrame.setLocationRelativeTo(null); // Center the window on the screen
+            welcomeFrame.setVisible(true);
+        });
+    }
+    
+    public static void initWindow(){
+// to show all the windows weve made
+CustomerListingandManagement();
+accountListing();
+LoginWindow();
+transactionManagementWindow();
+
+    }
+
+    public static void accountListing() {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Account Listing");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(500, 800); // Adjust size as needed
+
+            AccountPanel accountPanel = new AccountPanel();
+            AccountController accountController = new AccountController(accountPanel);
+            frame.add(accountPanel);
+
+            accountController.fetchAndDisplayAccounts(); // This should be called after the AccountPanel is fully initialized
+
+            frame.setLocationRelativeTo(null); // Center the window on the screen
+            frame.setVisible(true);
+        });
+    }
+
+
+    public static void CustomerListingandManagement() {
+        SwingUtilities.invokeLater(() -> {
+        JFrame frame = new JFrame("Customer Listing");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1280, 800); // Adjust size as needed
+
+        CustomerPanel customerPanel = new CustomerPanel();
+        CustomerDAO customerDAO = new CustomerDAO(); // Initialize your CustomerDAO here
+        CustomerController customerController = new CustomerController(customerPanel, customerDAO);
+
+        frame.add(customerController.getView());
+        customerController.displayAllCustomers();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    });
+
+    }
+
 
     public static void EmployeeManagementWindow(){
 
