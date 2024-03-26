@@ -111,5 +111,17 @@ public class AccountDAO implements AccountDAOInterface {
         return accounts;
     }
 
+
+    public void deleteAllAccounts() {
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            String sql = "DELETE FROM bank_account"; // Assuming the table name is Bank_Account
+            stmt.executeUpdate(sql);
+            System.out.println("All accounts have been deleted successfully.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
     
 }

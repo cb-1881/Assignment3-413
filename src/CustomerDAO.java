@@ -130,5 +130,17 @@ public class CustomerDAO implements CustomerDAOInterface {
         return false;
     }
 
+    public void deleteAllCustomers() {
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            String sql = "DELETE FROM Customer";
+            stmt.executeUpdate(sql);
+            System.out.println("All customers have been deleted successfully.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+
     
 }

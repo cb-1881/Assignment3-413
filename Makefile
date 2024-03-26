@@ -15,9 +15,13 @@ compile:
 	@$(JAVAC) -cp "$(CLASSPATH)" -d $(BUILD_DIR) $(SRC_DIR)/*.java
 
 run:
-	@echo "Running..."
-	@$(JAVA) -cp "dep/*:classes" Driver
+	@echo "Everythings ready, Please run make driver"
+   
 
+driver:
+	@echo "running driver for GUI"
+	@$(JAVA) -cp "dep/*:classes" Driver
+	
 createDatabase:
 	@echo "creating database..."
 	@$(JAVA) -cp "dep/*:classes" databaseSetup
@@ -26,7 +30,7 @@ dropTables:
 	@echo "Dropping tables..."
 	@$(JAVA) -cp "dep/*:classes" dropTables
 
-populateEmp:
+populateDatabase:
 	@echo "Running..."
 	@$(JAVA) -cp "dep/*:classes" ExampleTest
 
